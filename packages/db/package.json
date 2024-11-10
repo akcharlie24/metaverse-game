@@ -1,0 +1,27 @@
+{
+  "name": "@repo/db",
+  "main": "./dist/index.js",
+  "version": "0.0.0",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate",
+    "build": "tsup"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "@types/node": "^22.9.0",
+    "prisma": "^5.21.1",
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "5.2.2"
+  }
+}
