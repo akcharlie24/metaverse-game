@@ -8,8 +8,13 @@
     "build": "tsup",
     "clean": "rm -rf dist"
   },
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"
