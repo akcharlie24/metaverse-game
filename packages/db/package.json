@@ -5,7 +5,8 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "build": "tsup"
+    "build": "tsup",
+    "clean": "rm -rf dist"
   },
   "exports": {
     ".": "./dist/index.js"
