@@ -67,7 +67,7 @@ export const AddElementSchema = z.object({
 });
 
 export const DeleteElementSchema = z.object({
-  elementId: z.string().min(1),
+  id: z.string().min(1),
 });
 
 export const UpdateElementSchema = z.object({

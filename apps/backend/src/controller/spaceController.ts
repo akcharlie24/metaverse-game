@@ -1,5 +1,10 @@
 import prisma from "@repo/db";
-import { CreateSpaceSchema } from "@repo/types";
+import {
+  AddElementSchema,
+  CreateSpaceSchema,
+  DeleteElementSchema,
+} from "@repo/types";
+import { error } from "console";
 import { Request, Response } from "express";
 
 export async function createSpace(req: Request, res: Response): Promise<void> {
@@ -75,13 +80,11 @@ export async function createSpace(req: Request, res: Response): Promise<void> {
   } catch (e: any) {
     // TODO: these errors should not be logged on our server (better logging for internal server errors should be done)
     console.error(e);
-    res
-      .status(400)
-      .json({ message: "Bad Request, Invalid Credentials", error: e.message });
+    res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
 
-export async function deleteSpace(req: Request, res: Response) {
+export async function deleteSpace(req: Request, res: Response): Promise<void> {
   try {
     const spaceId = req.params.spaceId;
 
@@ -111,13 +114,11 @@ export async function deleteSpace(req: Request, res: Response) {
     res.status(200).json({ message: "Space successfully deleted" });
   } catch (e: any) {
     console.error(e);
-    res
-      .status(400)
-      .json({ message: "Bad Request, Invalid Credentials", error: e.message });
+    res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
 
-export async function getMySpaces(req: Request, res: Response) {
+export async function getMySpaces(req: Request, res: Response): Promise<void> {
   try {
     const mySpaces = await prisma.space.findMany({
       where: {
@@ -135,8 +136,165 @@ export async function getMySpaces(req: Request, res: Response) {
     });
   } catch (e: any) {
     console.error(e);
-    res
-      .status(400)
-      .json({ message: "Bad Request, Invalid Credentials", error: e.message });
+    res.status(400).json({ message: "Bad Request", error: e.message });
+  }
+}
+
+export async function getSpaceFromId(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const spaceId = req.params.spaceId;
+
+    if (!spaceId || spaceId === "") {
+      throw new Error("Please Enter Space Id");
+    }
+
+    // TODO: rename elements inside space to spaceElements in the prisma Schema
+    const space = await prisma.space.findUnique({
+      where: {
+        id: spaceId,
+      },
+      include: {
+        elements: {
+          include: {
+            element: true,
+          },
+        },
+      },
+    });
+
+    if (!space) {
+      throw new Error("Error fetching space, Please try again");
+    }
+
+    if (space.creatorId !== req.userId) {
+      res.status(403).json({ message: "No such space in your spaces" });
+      return;
+    }
+
+    const spaceObject = {
+      dimensions: `${space.width}x${space.height}`,
+      elements: space.elements.map((e) => ({
+        id: e.id,
+        element: {
+          id: e.element.id,
+          imageUrl: e.element.imageUrl,
+          static: e.element.static,
+          height: e.element.height,
+          width: e.element.width,
+        },
+        x: e.x,
+        y: e.y,
+      })),
+    };
+
+    res.status(200).json(spaceObject);
+  } catch (e: any) {
+    console.error(e);
+    res.status(400).json({ message: "Bad Request", error: e.message });
+  }
+}
+
+export async function addElementToSpace(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const parsedData = AddElementSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+      throw new Error(parsedData.error.issues[0]?.message);
+    }
+
+    const { elementId, spaceId, x, y } = parsedData.data;
+
+    const space = await prisma.space.findUnique({
+      where: {
+        id: spaceId,
+        creatorId: req.userId,
+      },
+      select: {
+        width: true,
+        height: true,
+      },
+    });
+
+    if (!space) {
+      throw new Error("Space not found, Please try again");
+    }
+
+    if (x < 0 || x > space.width || y < 0 || y > space.height) {
+      res.status(403).json({
+        message: `x or y out of bound please keep x b/w 0-${space.width} and y b/w 0-${space.height}`,
+      });
+      return;
+    }
+
+    // Linking a space element between elements and space is a goated practice and too good
+    const addSpaceElement = await prisma.spaceElements.create({
+      data: {
+        spaceId,
+        elementId,
+        x,
+        y,
+      },
+    });
+
+    if (!addSpaceElement) {
+      throw new Error("Error creating space element, please try again");
+    }
+
+    res.status(200).json({ message: "Successfully added element to space" });
+  } catch (e: any) {
+    console.error(e);
+    res.status(400).json({ message: "Bad Request", error: e.message });
+  }
+}
+
+export async function deleteElementFromSpace(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const parsedData = DeleteElementSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+      throw new Error(parsedData.error.issues[0]?.message);
+    }
+
+    const deletedElement = await prisma.spaceElements.delete({
+      where: {
+        id: parsedData.data.id,
+      },
+    });
+
+    if (!deletedElement) {
+      throw new Error("Unable to delete, Please try again");
+    }
+
+    res.status(200).json({ message: "Element deleted successfully" });
+  } catch (e: any) {
+    console.error(e);
+    res.status(400).json({ message: "Bad Request", error: e.message });
+  }
+}
+
+export async function getAllElements(
+  _req: Request,
+  res: Response,
+): Promise<any> {
+  try {
+    const elements = await prisma.element.findMany();
+
+    if (!elements) {
+      throw new Error("Error fetching elements, try again");
+    }
+
+    res.status(200).json({ elements });
+  } catch (e: any) {
+    console.error(e);
+    res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
