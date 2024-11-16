@@ -98,9 +98,10 @@ export async function signInUser(req: Request, res: Response): Promise<void> {
     // TODO: customize jwt
     const authToken: string = jwt.sign(payload, JWT_SECRET);
 
-    res
-      .status(200)
-      .json({ message: "Successfully Logged In", token: authToken });
+    res.status(200).json({
+      message: "Successfully Logged In",
+      token: authToken,
+    });
   } catch (e: any) {
     console.error(e);
     res
@@ -118,9 +119,7 @@ export async function getAllAvatars(
 
     res.status(200).json({
       message: "Avatars fetched successfully ",
-      data: {
-        avatars: fetchedAvatars,
-      },
+      avatars: fetchedAvatars,
     });
   } catch (e: any) {
     console.error(e);

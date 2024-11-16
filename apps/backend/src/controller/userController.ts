@@ -69,9 +69,7 @@ export async function getBulkAvatars(
 
     res.status(200).json({
       message: "Avatars fetched successfully",
-      data: {
-        avatars: bulkAvatars,
-      },
+      avatars: bulkAvatars,
     });
   } catch (e: any) {
     console.error(e);

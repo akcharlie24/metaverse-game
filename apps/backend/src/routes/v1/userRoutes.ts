@@ -4,7 +4,9 @@ import { Router } from "express";
 
 const userRoutes = Router();
 
-userRoutes.post("/metadata", authMiddleware, updateUserAvatar);
-userRoutes.get("/metadata/bulk", authMiddleware, getBulkAvatars);
+userRoutes.use(authMiddleware);
+
+userRoutes.post("/metadata", updateUserAvatar);
+userRoutes.get("/metadata/bulk", getBulkAvatars);
 
 export default userRoutes as Router;
