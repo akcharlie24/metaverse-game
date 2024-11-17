@@ -34,7 +34,6 @@ export async function updateUserAvatar(
 
     res.status(200).json({ message: "User metadata updated successfully" });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -45,34 +44,42 @@ export async function getBulkAvatars(
 ): Promise<void> {
   try {
     const idString = req.query.ids as string;
+
     if (!idString) {
       throw new Error("Please enter ids to get avatar");
     }
 
-    const idArray: string[] = JSON.parse(idString);
+    const idArray = idString.slice(1, -1).split(",");
+
+    // this works when the ids are given like ["hello","hi"] but not when [hello,hi]
+    // const idArray: string[] = JSON.parse(idString);
 
     if (!Array.isArray(idArray) || idArray.length === 0) {
       throw new Error("Please enter the ids to get avatars");
     }
 
-    const bulkAvatars = await prisma.avatar.findMany({
+    const users = await prisma.user.findMany({
       where: {
         id: {
           in: idArray,
         },
       },
       select: {
-        imageUrl: true,
-        name: true,
+        avatar: true,
+        id: true,
       },
     });
+
+    const bulkAvatars = users.map((u) => ({
+      userId: u.id,
+      imageUrl: u.avatar?.imageUrl || "",
+    }));
 
     res.status(200).json({
       message: "Avatars fetched successfully",
       avatars: bulkAvatars,
     });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }

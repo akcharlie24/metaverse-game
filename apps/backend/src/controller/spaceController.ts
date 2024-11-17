@@ -4,7 +4,6 @@ import {
   CreateSpaceSchema,
   DeleteElementSchema,
 } from "@repo/types";
-import { error } from "console";
 import { Request, Response } from "express";
 
 export async function createSpace(req: Request, res: Response): Promise<void> {
@@ -79,7 +78,6 @@ export async function createSpace(req: Request, res: Response): Promise<void> {
     });
   } catch (e: any) {
     // TODO: these errors should not be logged on our server (better logging for internal server errors should be done)
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -113,7 +111,6 @@ export async function deleteSpace(req: Request, res: Response): Promise<void> {
 
     res.status(200).json({ message: "Space successfully deleted" });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -135,10 +132,11 @@ export async function getMySpaces(req: Request, res: Response): Promise<void> {
       spaces: mySpaces,
     });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
+
+let count = 0;
 
 export async function getSpaceFromId(
   req: Request,
@@ -192,7 +190,6 @@ export async function getSpaceFromId(
 
     res.status(200).json(spaceObject);
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -226,11 +223,13 @@ export async function addElementToSpace(
     }
 
     if (x < 0 || x > space.width || y < 0 || y > space.height) {
-      res.status(403).json({
+      res.status(400).json({
         message: `x or y out of bound please keep x b/w 0-${space.width} and y b/w 0-${space.height}`,
       });
       return;
     }
+
+    // TODO: BIG Sanitization -> should not be able to add elements to same position (can however be controlled from frontend)
 
     // Linking a space element between elements and space is a goated practice and too good
     const addSpaceElement = await prisma.spaceElements.create({
@@ -248,7 +247,6 @@ export async function addElementToSpace(
 
     res.status(200).json({ message: "Successfully added element to space" });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -264,19 +262,37 @@ export async function deleteElementFromSpace(
       throw new Error(parsedData.error.issues[0]?.message);
     }
 
-    const deletedElement = await prisma.spaceElements.delete({
+    // TODO: Sanitization ensure that the element exists first
+    const elementToDelete = await prisma.spaceElements.findUnique({
       where: {
         id: parsedData.data.id,
+      },
+      include: {
+        space: true,
+      },
+    });
+
+    if (!elementToDelete || !elementToDelete.space) {
+      throw new Error("There is no such element to delete");
+    }
+
+    if (elementToDelete.space.creatorId !== req.userId) {
+      res.status(403).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const deletedElement = await prisma.spaceElements.delete({
+      where: {
+        id: elementToDelete.id,
       },
     });
 
     if (!deletedElement) {
-      throw new Error("Unable to delete, Please try again");
+      throw new Error("Unable to delete element");
     }
 
     res.status(200).json({ message: "Element deleted successfully" });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
@@ -294,7 +310,6 @@ export async function getAllElements(
 
     res.status(200).json({ elements });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }

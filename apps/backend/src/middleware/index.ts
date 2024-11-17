@@ -36,7 +36,6 @@ export function authMiddleware(
     req.userId = data.userId;
     next();
   } catch (e: any) {
-    console.log(e);
     res.status(403).json({ message: "Access Denied", error: e.message });
   }
 }
@@ -72,7 +71,6 @@ export function authAdminMiddleware(
       next();
     }
   } catch (e: any) {
-    console.log(e);
     res.status(403).json({ message: "Access Denied", error: e.message });
   }
 }

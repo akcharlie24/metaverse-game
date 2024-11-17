@@ -13,7 +13,9 @@ authRoutes.post("/signup", signUpUser);
 authRoutes.post("/signin", signInUser);
 
 // exception routes
-authRoutes.get("/avatars", authMiddleware, getAllAvatars);
-authRoutes.get("/elements", authMiddleware, getAllElements);
+// TODO: might add middleware if needed
+
+authRoutes.get("/avatars", getAllAvatars);
+authRoutes.get("/elements", getAllElements);
 
 export default authRoutes as Router;

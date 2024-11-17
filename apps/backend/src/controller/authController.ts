@@ -50,7 +50,6 @@ export async function signUpUser(req: Request, res: Response): Promise<void> {
       userId: newUser.id,
     });
   } catch (e: any) {
-    console.error(e);
     // TODO: better error handling via express error handlers
     res
       .status(400)
@@ -103,7 +102,6 @@ export async function signInUser(req: Request, res: Response): Promise<void> {
       token: authToken,
     });
   } catch (e: any) {
-    console.error(e);
     res
       .status(400)
       .json({ message: "Bad Request, Invalid Credentials", error: e.message });
@@ -122,7 +120,6 @@ export async function getAllAvatars(
       avatars: fetchedAvatars,
     });
   } catch (e: any) {
-    console.error(e);
     res.status(400).json({ message: "Bad Request", error: e.message });
   }
 }
