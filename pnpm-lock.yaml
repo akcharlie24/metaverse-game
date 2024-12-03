@@ -153,6 +153,61 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
+  apps/websocket:
+    dependencies:
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@types/dotenv':
+        specifier: ^8.2.3
+        version: 8.2.3
+      bcrypt:
+        specifier: ^5.1.1
+        version: 5.1.1
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      express:
+        specifier: ^4.21.1
+        version: 4.21.1
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.0
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/bcrypt':
+        specifier: ^5.0.2
+        version: 5.0.2
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/jsonwebtoken':
+        specifier: ^9.0.7
+        version: 9.0.7
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.5.13
+      tsup:
+        specifier: ^8.0.2
+        version: 8.3.5(tsx@4.19.2)(typescript@5.5.4)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.19.2
+      typescript:
+        specifier: 5.5.4
+        version: 5.5.4
+
   packages/db:
     dependencies:
       '@prisma/client':
@@ -2040,6 +2095,12 @@ packages:
 
   /@types/tinycolor2@1.4.6:
     resolution: {integrity: sha512-iEN8J0BoMnsWBqjVbWH/c0G0Hh7O21lpR2/+PrvAVgWdzL7eexIFm4JN/Wn10PTcmNdtS6U67r499mlWMXOxNw==}
+    dev: true
+
+  /@types/ws@8.5.13:
+    resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
+    dependencies:
+      '@types/node': 20.16.5
     dev: true
 
   /@types/yargs-parser@21.0.3:
@@ -6641,7 +6702,6 @@ packages:
 
   /picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
-    dev: true
 
   /picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
@@ -6700,7 +6760,7 @@ packages:
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.7
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       source-map-js: 1.2.1
     dev: false
 
@@ -8222,6 +8282,19 @@ packages:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
+    dev: false
+
+  /ws@8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: false
 
   /y18n@5.0.8:
