@@ -1,5 +1,5 @@
-import prisma from "@repo/db";
-import { UpdateMetadataSchema } from "@repo/types";
+import prisma from "@repo/db/prisma";
+import { UpdateMetadataSchema } from "@repo/types/common-types";
 import { Request, Response } from "express";
 
 export async function updateUserAvatar(

@@ -1,10 +1,10 @@
-import prisma from "@repo/db";
+import prisma from "@repo/db/prisma";
 import {
   CreateAvatarSchema,
   CreateElementSchema,
   CreateMapSchema,
   UpdateElementSchema,
-} from "@repo/types";
+} from "@repo/types/common-types";
 import { Request, Response } from "express";
 
 export async function createAvatar(req: Request, res: Response): Promise<any> {

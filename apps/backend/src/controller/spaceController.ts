@@ -1,9 +1,9 @@
-import prisma from "@repo/db";
+import prisma from "@repo/db/prisma";
 import {
   AddElementSchema,
   CreateSpaceSchema,
   DeleteElementSchema,
-} from "@repo/types";
+} from "@repo/types/common-types";
 import { Request, Response } from "express";
 
 export async function createSpace(req: Request, res: Response): Promise<void> {

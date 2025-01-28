@@ -5,8 +5,8 @@
     "paths": {
       "@/*": ["*"]
     },
-    "module": "NodeNext",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "exclude": ["node_modules"],
   "include": ["."]

@@ -1,20 +1,12 @@
 {
   "name": "@repo/db",
-  "main": "./dist/index.js",
+  "main": "./index.js",
   "version": "0.0.0",
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
-    "build": "tsup",
-    "clean": "rm -rf dist"
+    "db:generate": "prisma generate"
   },
-  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
+    "./prisma": "./src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"
